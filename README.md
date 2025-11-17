@@ -23,16 +23,16 @@ Pick the command that matches your shell/OS and it will download the latest rele
 **macOS / Linux (bash, zsh, sh, fish):**
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/boi-gg/ghstats/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/boi-gg/ghstats/develop/scripts/install.sh | bash
 ```
 
 **Windows PowerShell / pwsh:**
 
 ```powershell
-irm https://raw.githubusercontent.com/boi-gg/ghstats/main/scripts/install.ps1 | iex
+irm https://raw.githubusercontent.com/boi-gg/ghstats/develop/scripts/install.ps1 | iex
 ```
 
-The POSIX installer defaults to `~/.local/bin`; override with `INSTALL_DIR=/custom/path` or `--dir /custom/path`. The PowerShell installer targets `%LOCALAPPDATA%\Programs\ghstats` and accepts `-InstallDir C:\tools` if you prefer a different destination.
+These URLs track the default `develop` branch. Swap `develop` for a specific tag (e.g., `v1.2.0`) if you prefer a pinned installer. The POSIX installer defaults to `~/.local/bin`; override with `INSTALL_DIR=/custom/path` or `--dir /custom/path`. The PowerShell installer targets `%LOCALAPPDATA%\Programs\ghstats` and accepts `-InstallDir C:\tools` if you prefer a different destination.
 
 ### Option 1: Download a release binary (recommended)
 

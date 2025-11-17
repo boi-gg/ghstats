@@ -149,4 +149,4 @@ case ":$PATH:" in
 
 esac
 
-printf 'Run \'ghstats --help\' to get started.\n'
+printf "Run 'ghstats --help' to get started.\n"
