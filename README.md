@@ -30,7 +30,7 @@ curl -fsSL https://raw.githubusercontent.com/boi-gg/ghstats/develop/scripts/inst
 
 **Windows PowerShell / pwsh:**
 
-```powershell
+```sh
 irm https://raw.githubusercontent.com/boi-gg/ghstats/develop/scripts/install.ps1 | iex
 ```
 
