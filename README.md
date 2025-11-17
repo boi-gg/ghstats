@@ -129,7 +129,7 @@ Once the workflow completes, the tagged binaries will appear on the Releases pag
 
 ## Development tips
 
-- `go run ./ghstats.go` lets you iterate without building.
+- `go run ./main.go` lets you iterate without building.
 - Use `ghstats -short` while developing to skip author cards and focus on the aggregate output.
 - If you add new CLI flags, remember to document them here and update any automation relying on default output.
 
