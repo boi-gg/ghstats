@@ -1,5 +1,7 @@
 # ghstats
 
+<img width="803" height="425" alt="image" src="https://github.com/user-attachments/assets/9f773907-3d20-4ec3-b4cf-f729fedc0971" />
+
 `ghstats` is a tiny terminal dashboard that turns `git log` output into weekly contribution cards. It buckets every commit by ISO week, aggregates additions/deletions/commits, and renders lightweight charts using [Charmbracelet Lip Gloss](https://github.com/charmbracelet/lipgloss). Run it inside any Git repository to see a high-level "All Contributors" card plus per-author impact snapshots, sparklines, and filters to zero in on the time range or contributor you care about.
 
 ## Highlights
