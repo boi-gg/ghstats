@@ -129,6 +129,8 @@ git push origin v1.0.0
 
 Once the workflow completes, the tagged binaries will appear on the Releases page.
 
+The embedded Git tag is surfaced at runtime via `ghstats --version`, which prints `ghstats <tag>` (e.g. `ghstats v1.2.0`). Builds without an embedded tag report `ghstats (dev)` instead.
+
 ## Development tips
 
 - `go run ./main.go` lets you iterate without building.
