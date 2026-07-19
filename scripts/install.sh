@@ -112,6 +112,31 @@ else
   wget --tries=3 --retry-connrefused --waitretry=2 "$URL" -O "$TMP_FILE"
 fi
 
+# Verify checksum if checksums.txt is published for this release.
+# Older releases (pre-checksum) do not publish checksums.txt; warn and continue.
+CHECKSUM_URL="${DOWNLOAD_BASE}/checksums.txt"
+if [ "$DOWNLOADER" = "curl" ]; then
+  CHECKSUMS=$(curl -fsSL "$CHECKSUM_URL" 2>/dev/null || true)
+else
+  CHECKSUMS=$(wget -qO- "$CHECKSUM_URL" 2>/dev/null || true)
+fi
+if [ -z "$CHECKSUMS" ]; then
+  echo "warning: could not fetch ${CHECKSUM_URL}; skipping checksum verification" >&2
+else
+  EXPECTED=$(printf '%s\n' "$CHECKSUMS" | grep "  ${ASSET_NAME}\$" | awk '{print $1}')
+  if [ -z "$EXPECTED" ]; then
+    echo "warning: no checksum entry for ${ASSET_NAME} in ${CHECKSUM_URL}; skipping verification" >&2
+  elif ! command -v sha256sum >/dev/null 2>&1; then
+    echo "warning: sha256sum not found; cannot verify checksum" >&2
+  else
+    ACTUAL=$(sha256sum "$TMP_FILE" | awk '{print $1}')
+    if [ "$ACTUAL" != "$EXPECTED" ]; then
+      echo "error: checksum mismatch for ${ASSET_NAME} (expected ${EXPECTED}, got ${ACTUAL})" >&2
+      exit 1
+    fi
+  fi
+fi
+
 chmod +x "$TMP_FILE"
 
 if [ ! -d "$INSTALL_DIR" ]; then
