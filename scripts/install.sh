@@ -121,20 +121,16 @@ if [ ! -d "$INSTALL_DIR" ]; then
 fi
 
 TARGET="$INSTALL_DIR/$BINARY_NAME"
-MOVE_OK=0
-if mv "$TMP_FILE" "$TARGET" 2>/dev/null; then
-  MOVE_OK=1
+if install -m 0755 "$TMP_FILE" "$TARGET" 2>/dev/null; then
+  :
 else
   if command -v sudo >/dev/null 2>&1; then
     echo "Elevated permissions needed to write to $INSTALL_DIR"
-    sudo mv "$TMP_FILE" "$TARGET"
-    MOVE_OK=1
+    sudo install -m 0755 "$TMP_FILE" "$TARGET"
+  else
+    echo "error: could not install binary into $INSTALL_DIR" >&2
+    exit 1
   fi
-fi
-
-if [ "$MOVE_OK" -ne 1 ]; then
-  echo "error: could not move binary into $INSTALL_DIR" >&2
-  exit 1
 fi
 
 printf 'ghstats installed to %s\n' "$TARGET"
