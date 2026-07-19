@@ -23,6 +23,7 @@ $url = "$DownloadBase/$assetName"
 $tempFile = Join-Path $env:TEMP ("$assetName-" + [System.Guid]::NewGuid().ToString())
 
 Write-Host "Downloading $url"
+$ProgressPreference = 'SilentlyContinue'
 Invoke-WebRequest -Uri $url -OutFile $tempFile -UseBasicParsing
 
 if (-not (Test-Path $InstallDir)) {
@@ -35,9 +36,10 @@ Move-Item -Path $tempFile -Destination $target -Force
 
 Write-Host "ghstats installed to $target"
 
-$pathEntries = $env:PATH -split ';'
-if ($pathEntries -notcontains $InstallDir) {
-    Write-Warning "$InstallDir is not on your PATH. Add it via System Properties or run:`n  setx PATH \"$InstallDir;%PATH%\""
+$normalizedInstall = $InstallDir.TrimEnd('\')
+$onPath = ($env:PATH -split ';' | ForEach-Object { $_.TrimEnd('\') }) -contains $normalizedInstall
+if (-not $onPath) {
+    Write-Warning "$InstallDir is not on your PATH. Add it via System Properties or run:`n  [Environment]::SetEnvironmentVariable('PATH', `"$InstallDir;`$([Environment]::GetEnvironmentVariable('PATH','User'))`", 'User')"
 }
 
 Write-Host "Run 'ghstats --help' from a new PowerShell window to verify."
