@@ -4,6 +4,8 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+[Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12 -bor [Net.SecurityProtocolType]::Tls13
+
 $Repo = "boi-gg/ghstats"
 $DownloadBase = "https://github.com/$Repo/releases/latest/download"
 $BinaryName = "ghstats.exe"
@@ -22,22 +24,28 @@ $url = "$DownloadBase/$assetName"
 
 $tempFile = Join-Path $env:TEMP ("$assetName-" + [System.Guid]::NewGuid().ToString())
 
-Write-Host "Downloading $url"
 $ProgressPreference = 'SilentlyContinue'
-Invoke-WebRequest -Uri $url -OutFile $tempFile -UseBasicParsing
-
-if (-not (Test-Path $InstallDir)) {
-    Write-Host "Creating $InstallDir"
-    New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
-}
-
-$target = Join-Path $InstallDir $BinaryName
 try {
-    Move-Item -Path $tempFile -Destination $target -Force
-} catch {
-    $staged = Join-Path $InstallDir ("ghstats.exe.new-" + [System.Guid]::NewGuid().ToString())
-    Move-Item -Path $tempFile -Destination $staged -Force
-    Write-Warning "Could not replace $target because it is in use. A new version was staged at $staged. Stop any running ghstats process and run:`n  Move-Item -Force '$staged' '$target'"
+    Write-Host "Downloading $url"
+    Invoke-WebRequest -Uri $url -OutFile $tempFile -UseBasicParsing
+
+    if (-not (Test-Path $InstallDir)) {
+        Write-Host "Creating $InstallDir"
+        New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
+    }
+
+    $target = Join-Path $InstallDir $BinaryName
+    try {
+        Move-Item -Path $tempFile -Destination $target -Force
+    } catch {
+        $staged = Join-Path $InstallDir ("ghstats.exe.new-" + [System.Guid]::NewGuid().ToString())
+        Move-Item -Path $tempFile -Destination $staged -Force
+        Write-Warning "Could not replace $target because it is in use. A new version was staged at $staged. Stop any running ghstats process and run:`n  Move-Item -Force '$staged' '$target'"
+    }
+} finally {
+    if (Test-Path $tempFile) {
+        Remove-Item -Path $tempFile -Force -ErrorAction SilentlyContinue
+    }
 }
 
 Write-Host "ghstats installed to $target"
