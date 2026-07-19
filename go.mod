@@ -1,4 +1,4 @@
-module github.com/boi-gg/ghstats
+module github.com/tnfssc/ghstats
 
 go 1.24.6
 

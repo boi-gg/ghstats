@@ -13,7 +13,7 @@
 
 ## Installation
 
-Prebuilt binaries are produced by the release workflow and published to the GitHub Releases page at [`github.com/boi-gg/ghstats/releases`](https://github.com/boi-gg/ghstats/releases). Each release ships cross-compiled artifacts for:
+Prebuilt binaries are produced by the release workflow and published to the GitHub Releases page at [`github.com/tnfssc/ghstats/releases`](https://github.com/tnfssc/ghstats/releases). Each release ships cross-compiled artifacts for:
 
 - **Operating systems:** Linux, macOS (Darwin), and Windows
 - **Architectures:** `amd64` and `arm64` (note: Windows/arm64 builds are released without UPX compression for compatibility)
@@ -25,20 +25,20 @@ Pick the command that matches your shell/OS and it will download the latest rele
 **macOS / Linux (bash, zsh, sh, fish):**
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/boi-gg/ghstats/develop/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/tnfssc/ghstats/develop/scripts/install.sh | bash
 ```
 
 **Windows PowerShell / pwsh:**
 
 ```sh
-irm https://raw.githubusercontent.com/boi-gg/ghstats/develop/scripts/install.ps1 | iex
+irm https://raw.githubusercontent.com/tnfssc/ghstats/develop/scripts/install.ps1 | iex
 ```
 
 These URLs track the default `develop` branch. Swap `develop` for a specific tag (e.g., `v1.2.0`) if you prefer a pinned installer. The POSIX installer defaults to `~/.local/bin`; override with `INSTALL_DIR=/custom/path` or `--dir /custom/path`. The PowerShell installer targets `%LOCALAPPDATA%\Programs\ghstats` and accepts `-InstallDir C:\tools` if you prefer a different destination.
 
 ### Option 1: Download a release binary (recommended)
 
-1. Visit the [latest release](https://github.com/boi-gg/ghstats/releases/latest).
+1. Visit the [latest release](https://github.com/tnfssc/ghstats/releases/latest).
 2. Download the file named `ghstats-<os>-<arch>` (or `.exe` on Windows) that matches your platform.
 3. Make it executable and place it on your `PATH`:
 
@@ -54,7 +54,7 @@ These URLs track the default `develop` branch. Swap `develop` for a specific tag
 If you already have Go ≥ 1.24 installed:
 
 ```sh
-go install github.com/boi-gg/ghstats@latest
+go install github.com/tnfssc/ghstats@latest
 ```
 
 This drops `ghstats` into your `GOBIN` (usually `$GOPATH/bin`).
@@ -62,7 +62,7 @@ This drops `ghstats` into your `GOBIN` (usually `$GOPATH/bin`).
 ### Option 3: Build from source
 
 ```sh
-git clone https://github.com/boi-gg/ghstats.git
+git clone https://github.com/tnfssc/ghstats.git
 cd ghstats
 mise install  # ensures the repo's pinned Go toolchain
 go build -o ghstats
@@ -147,7 +147,7 @@ The embedded Git tag is surfaced at runtime via `ghstats --version`, which print
 
 ---
 
-Happy graphing! If you build something neat on top of `ghstats`, open an issue or pull request at [`github.com/boi-gg/ghstats`](https://github.com/boi-gg/ghstats).
+Happy graphing! If you build something neat on top of `ghstats`, open an issue or pull request at [`github.com/tnfssc/ghstats`](https://github.com/tnfssc/ghstats).
 
 ---
 

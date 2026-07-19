@@ -3,7 +3,7 @@
 
 set -eu
 
-REPO="boi-gg/ghstats"
+REPO="tnfssc/ghstats"
 if [ -z "${HOME:-}" ]; then
   echo "error: \$HOME is not set; cannot determine default install directory. Set INSTALL_DIR explicitly." >&2
   exit 1

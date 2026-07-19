@@ -6,7 +6,7 @@ $ErrorActionPreference = "Stop"
 
 [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12 -bor [Net.SecurityProtocolType]::Tls13
 
-$Repo = "boi-gg/ghstats"
+$Repo = "tnfssc/ghstats"
 $DownloadBase = "https://github.com/$Repo/releases/latest/download"
 $BinaryName = "ghstats.exe"
 
