@@ -4,6 +4,8 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+[Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12 -bor [Net.SecurityProtocolType]::Tls13
+
 $Repo = "boi-gg/ghstats"
 $DownloadBase = "https://github.com/$Repo/releases/latest/download"
 $BinaryName = "ghstats.exe"
@@ -22,16 +24,22 @@ $url = "$DownloadBase/$assetName"
 
 $tempFile = Join-Path $env:TEMP ("$assetName-" + [System.Guid]::NewGuid().ToString())
 
-Write-Host "Downloading $url"
-Invoke-WebRequest -Uri $url -OutFile $tempFile -UseBasicParsing
+try {
+    Write-Host "Downloading $url"
+    Invoke-WebRequest -Uri $url -OutFile $tempFile -UseBasicParsing
 
-if (-not (Test-Path $InstallDir)) {
-    Write-Host "Creating $InstallDir"
-    New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
+    if (-not (Test-Path $InstallDir)) {
+        Write-Host "Creating $InstallDir"
+        New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
+    }
+
+    $target = Join-Path $InstallDir $BinaryName
+    Move-Item -Path $tempFile -Destination $target -Force
+} finally {
+    if (Test-Path $tempFile) {
+        Remove-Item -Path $tempFile -Force -ErrorAction SilentlyContinue
+    }
 }
-
-$target = Join-Path $InstallDir $BinaryName
-Move-Item -Path $tempFile -Destination $target -Force
 
 Write-Host "ghstats installed to $target"
 
