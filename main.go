@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/charmbracelet/lipgloss"
+	"github.com/charmbracelet/x/term"
 )
 
 type WeekKey string
@@ -165,17 +166,11 @@ func parseInt(s string) int {
 // ------------------------------------
 
 func terminalWidth() int {
-	cmd := exec.Command("tput", "cols")
-	out, err := cmd.Output()
-	if err != nil {
+	w, _, err := term.GetSize(os.Stdout.Fd())
+	if err != nil || w < 40 {
 		return 80
 	}
-	var n int
-	fmt.Sscanf(string(out), "%d", &n)
-	if n < 40 {
-		return 80
-	}
-	return n
+	return w
 }
 
 // ------------------------------------
@@ -226,20 +221,19 @@ func renderStackedWeeklyChart(stats map[WeekKey]*WeekStats) (string, []int) {
 		}
 	}
 
-	width := terminalWidth() - 22
-	if width < 30 {
-		width = 30
-	}
-
 	var out strings.Builder
 
 	for _, w := range weeks {
 		ws := stats[WeekKey(w)]
+		total := ws.Add + ws.Del + ws.Commits
+		suffix := fmt.Sprintf(" (%d)", total)
+		width := terminalWidth() - len(w) - 3 - len(suffix)
+		if width < 30 {
+			width = 30
+		}
 		addSeg := barSegment(ws.Add, max, width, addColor)
 		delSeg := barSegment(ws.Del, max, width, delColor)
 		comSeg := barSegment(ws.Commits, max, width, comColor)
-
-		total := ws.Add + ws.Del + ws.Commits
 
 		out.WriteString(fmt.Sprintf(
 			"%s | %s%s%s (%d)\n",
@@ -349,6 +343,11 @@ func renderTeamOverview(stats map[WeekKey]*WeekStats) string {
 
 func main() {
 	flag.Parse()
+
+	if *flagLimit < 0 {
+		fmt.Fprintln(os.Stderr, "Error: --limit must be non-negative")
+		os.Exit(1)
+	}
 
 	dir := *flagDir
 	args := flag.Args()
