@@ -52,6 +52,11 @@ var (
 	flagShort  = flag.Bool("short", false, "Show only the aggregate All Contributors card")
 )
 
+var (
+	version     string
+	flagVersion = flag.Bool("version", false, "Print version and exit")
+)
+
 // ------------------------------------
 // Date utilities
 // ------------------------------------
@@ -356,6 +361,14 @@ func renderTeamOverview(stats map[WeekKey]*WeekStats) string {
 
 func main() {
 	flag.Parse()
+
+	if *flagVersion {
+		if version == "" {
+			version = "(dev)"
+		}
+		fmt.Println("ghstats", version)
+		return
+	}
 
 	dir := *flagDir
 	args := flag.Args()
