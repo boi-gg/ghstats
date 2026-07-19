@@ -62,7 +62,7 @@ func parseDate(s string) *time.Time {
 	}
 	t, err := time.Parse("2006-01-02", s)
 	if err != nil {
-		fmt.Println("Invalid date:", s)
+		fmt.Fprintln(os.Stderr, "Invalid date:", s)
 		os.Exit(1)
 	}
 	return &t
@@ -94,7 +94,7 @@ func parseGitLog(repoDir string, since, until *time.Time, authorFilter *regexp.R
 		if msg == "" {
 			msg = err.Error()
 		}
-		return nil, fmt.Errorf("git log failed in %s: %s", repoDir, msg)
+		return nil, fmt.Errorf("git log failed in %s: %s: %w", repoDir, msg, err)
 	}
 
 	lines := bytes.Split(out, []byte("\n"))
@@ -113,7 +113,11 @@ func parseGitLog(repoDir string, since, until *time.Time, authorFilter *regexp.R
 			author = strings.TrimSpace(parts[0])
 			date := strings.TrimSpace(parts[1])
 
-			t, _ := time.Parse("2006-01-02", date)
+			t, terr := time.Parse("2006-01-02", date)
+			if terr != nil {
+				includeCommit = false
+				continue
+			}
 
 			includeCommit = dateInRange(t, since, until)
 			if includeCommit && authorFilter != nil {
@@ -157,7 +161,9 @@ func parseInt(s string) int {
 		return 0
 	}
 	var n int
-	fmt.Sscanf(s, "%d", &n)
+	if _, err := fmt.Sscanf(s, "%d", &n); err != nil {
+		return 0
+	}
 	return n
 }
 
@@ -354,12 +360,12 @@ func main() {
 	dir := *flagDir
 	args := flag.Args()
 	if len(args) > 1 {
-		fmt.Println("Error: too many positional arguments (expected at most a repo path)")
+		fmt.Fprintln(os.Stderr, "Error: too many positional arguments (expected at most a repo path)")
 		os.Exit(1)
 	}
 	if len(args) == 1 {
 		if *flagDir != "." && *flagDir != args[0] {
-			fmt.Println("Error: repo directory specified via -dir and positional argument; please choose one")
+			fmt.Fprintln(os.Stderr, "Error: repo directory specified via -dir and positional argument; please choose one")
 			os.Exit(1)
 		}
 		dir = args[0]
@@ -367,7 +373,12 @@ func main() {
 
 	var rx *regexp.Regexp
 	if *flagAuthor != "" {
-		rx = regexp.MustCompile(*flagAuthor)
+		var err error
+		rx, err = regexp.Compile(*flagAuthor)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error: invalid --author regex: %v\n", err)
+			os.Exit(1)
+		}
 	}
 
 	weeks, err := parseGitLog(
@@ -377,8 +388,8 @@ func main() {
 		rx,
 	)
 	if err != nil {
-		fmt.Println("Error:", err)
-		return
+		fmt.Fprintln(os.Stderr, "Error:", err)
+		os.Exit(1)
 	}
 
 	teamStats := aggregateWeeks(weeks)
