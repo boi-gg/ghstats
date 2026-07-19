@@ -107,9 +107,9 @@ URL="${DOWNLOAD_BASE}/${ASSET_NAME}"
 
 printf 'Downloading %s...\n' "$URL"
 if [ "$DOWNLOADER" = "curl" ]; then
-  curl -fL "$URL" -o "$TMP_FILE"
+  curl -fL --retry 3 --retry-delay 2 "$URL" -o "$TMP_FILE"
 else
-  wget -q "$URL" -O "$TMP_FILE"
+  wget --tries=3 --retry-connrefused --waitretry=2 "$URL" -O "$TMP_FILE"
 fi
 
 chmod +x "$TMP_FILE"
