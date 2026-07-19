@@ -75,39 +75,47 @@ go build -o ghstats
 Run `ghstats` inside (or pointed at) a Git repository. By default it scans the entire history and prints the team card followed by one card per contributor.
 
 ```sh
-ghstats -dir ~/Code/project
+ghstats --dir ~/Code/project
 ```
 
 Filter by date range and author, and show only the aggregate card:
 
 ```sh
-ghstats -since 2024-01-01 -until 2024-06-30 -author "Alice|Bob" -short
+ghstats --since 2024-01-01 --until 2024-06-30 --author "Alice|Bob" --short
 ```
 
 ### CLI flags
 
+> Go's `flag` package accepts both `-flag` and `--flag` forms interchangeably. The examples below use the double-dash form for readability, but either works.
+
 | Flag      | Description                                                              |
 | --------- | ------------------------------------------------------------------------ |
-| `-since`  | Only include commits on or after this date (`YYYY-MM-DD`).               |
-| `-until`  | Only include commits on or before this date (`YYYY-MM-DD`).              |
-| `-author` | Regular expression to match author names.                                |
-| `-limit`  | Limit the number of contributor cards shown (sorted by impact).          |
-| `-dir`    | Path to the Git repository (defaults to `.` or the positional argument). |
-| `-short`  | Only display the aggregate "All Contributors" card.                      |
+| `--since`  | Only include commits on or after this date (`YYYY-MM-DD`).               |
+| `--until`  | Only include commits on or before this date (`YYYY-MM-DD`).              |
+| `--author` | Regular expression to match author names.                                |
+| `--limit`  | Limit the number of contributor cards shown (sorted by impact).          |
+| `--dir`    | Path to the Git repository (defaults to `.` or the positional argument). |
+| `--short`  | Only display the aggregate "All Contributors" card.                      |
 
 Example output (trimmed for brevity):
 
 ```text
-All Contributors
-Commits: 128   +5421 / -2310
-2025-W10 | ███████████████████████████████████ (333)
-2025-W11 | ████████████████████ (211)
-...
+╭───────────────────────────────────────────────────────────────────╮
+│ All Contributors                                                  │
+│ Commits: 128   +5421 / -2310                                       │
+│                                                                   │
+│ 2025-W10 | ███████████████████████████████████ (333)               │
+│ 2025-W11 | ████████████████████ (211)                              │
+│ ...                                                               │
+╰───────────────────────────────────────────────────────────────────╯
 
-Alice Example
-Commits: 57   +2100 / -900   Impact: 3057
-2025-W10 | ██████████████... (120)
-Summary: ▁▃▄▆█▇
+╭───────────────────────────────────────────╮
+│ Alice Example                              │
+│ Commits: 57   +2100 / -900   Impact: 3057  │
+│                                            │
+│ 2025-W10 | ██████████████... (120)         │
+│ Summary: ▁▃▄▆█▇                            │
+╰───────────────────────────────────────────╯
 ```
 
 ## Release workflow
@@ -132,7 +140,7 @@ Once the workflow completes, the tagged binaries will appear on the Releases pag
 ## Development tips
 
 - `go run ./main.go` lets you iterate without building.
-- Use `ghstats -short` while developing to skip author cards and focus on the aggregate output.
+- Use `ghstats --short` while developing to skip author cards and focus on the aggregate output.
 - If you add new CLI flags, remember to document them here and update any automation relying on default output.
 
 ---
@@ -142,7 +150,7 @@ Happy graphing! If you build something neat on top of `ghstats`, open an issue o
 ---
 
 ```txt
-$ ghstats -short
+$ ghstats --short
 ╭───────────────────────────────────────────────────────────────────────────────╮
 │                                                                               │
 │ All Contributors                                                              │
