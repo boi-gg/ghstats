@@ -31,7 +31,13 @@ if (-not (Test-Path $InstallDir)) {
 }
 
 $target = Join-Path $InstallDir $BinaryName
-Move-Item -Path $tempFile -Destination $target -Force
+try {
+    Move-Item -Path $tempFile -Destination $target -Force
+} catch {
+    $staged = Join-Path $InstallDir ("ghstats.exe.new-" + [System.Guid]::NewGuid().ToString())
+    Move-Item -Path $tempFile -Destination $staged -Force
+    Write-Warning "Could not replace $target because it is in use. A new version was staged at $staged. Stop any running ghstats process and run:`n  Move-Item -Force '$staged' '$target'"
+}
 
 Write-Host "ghstats installed to $target"
 

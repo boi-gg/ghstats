@@ -44,6 +44,9 @@ jobs:
         if: ${{ matrix.goos == 'windows' }}
         run: mv ghstats-${{ matrix.goos }}-${{ matrix.goarch }} ghstats-${{ matrix.goos }}-${{ matrix.goarch }}.exe
 
+      - name: Install UPX
+        run: sudo apt-get update && sudo apt-get install -y upx
+
       - name: Package the executable
         if: ${{ ! (matrix.goos == 'windows' && matrix.goarch == 'arm64') }}
         run: upx --best --lzma --force-macos ghstats*
