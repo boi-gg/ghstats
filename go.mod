@@ -1,6 +1,6 @@
 module github.com/boi-gg/ghstats
 
-go 1.24.1
+go 1.24.6
 
 require github.com/charmbracelet/lipgloss v1.1.0
 

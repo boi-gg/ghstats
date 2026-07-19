@@ -65,7 +65,7 @@ This drops `ghstats` into your `GOBIN` (usually `$GOPATH/bin`).
 git clone https://github.com/boi-gg/ghstats.git
 cd ghstats
 mise install  # ensures the repo's pinned Go toolchain
-mise run go build -o ghstats
+go build -o ghstats
 ```
 
 `mise` is optional; you can also use your system Go toolchain as long as it matches the version in `go.mod` (currently Go 1.24.1).

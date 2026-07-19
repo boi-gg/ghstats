@@ -91,7 +91,7 @@ func parseGitLog(repoDir string, since, until *time.Time, authorFilter *regexp.R
 	if _, err := os.Stat(repoDir); err != nil {
 		return nil, fmt.Errorf("invalid --dir %q: %w", repoDir, err)
 	}
-	cmd := exec.Command("git", "log", "--numstat", "--date=short", "--pretty=%aN|%ad")
+	cmd := exec.Command("git", "log", "--no-merges", "--numstat", "--date=short", "--pretty=%aN%x00%ad")
 	cmd.Dir = repoDir
 	out, err := cmd.CombinedOutput()
 	if err != nil {
@@ -112,9 +112,9 @@ func parseGitLog(repoDir string, since, until *time.Time, authorFilter *regexp.R
 	for _, lnBytes := range lines {
 		ln := string(lnBytes)
 
-		// line with author|date
-		if strings.Contains(ln, "|") {
-			parts := strings.Split(ln, "|")
+		// commit header: author\x00date (NUL-separated to survive '|' in paths)
+		if strings.Contains(ln, "\x00") {
+			parts := strings.Split(ln, "\x00")
 			author = strings.TrimSpace(parts[0])
 			date := strings.TrimSpace(parts[1])
 
@@ -144,7 +144,8 @@ func parseGitLog(repoDir string, since, until *time.Time, authorFilter *regexp.R
 			continue
 		}
 
-		fields := strings.Fields(ln)
+		// numstat: added\tdeleted\tpath — split on tab so paths with spaces survive
+		fields := strings.SplitN(ln, "\t", 3)
 		if len(fields) == 3 {
 			add := parseInt(fields[0])
 			del := parseInt(fields[1])
