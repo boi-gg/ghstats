@@ -1,9 +1,13 @@
 #!/usr/bin/env sh
 # Installs the latest ghstats binary for Linux or macOS.
 
-set -e
+set -eu
 
 REPO="boi-gg/ghstats"
+if [ -z "${HOME:-}" ]; then
+  echo "error: \$HOME is not set; cannot determine default install directory. Set INSTALL_DIR explicitly." >&2
+  exit 1
+fi
 INSTALL_DIR=${INSTALL_DIR:-"$HOME/.local/bin"}
 BINARY_NAME="ghstats"
 DOWNLOAD_BASE="https://github.com/${REPO}/releases/latest/download"
